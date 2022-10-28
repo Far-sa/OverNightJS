@@ -1,36 +1,28 @@
 import { compareSync, genSaltSync, hashSync } from 'bcrypt'
-import { sign } from 'jsonwebtoken'
-import { UserModel } from '../models/user.model'
-import { jwtGenPayloadDTO } from '../types/public.types'
+import { sign, verify } from 'jsonwebtoken'
+import { JwtToken } from '../types/public.types'
 
-const ACCESS_TOKEN = String(process.env.JWT_ACCESS_TOKEN)
+export class AuthUtils {
+  public static hashPassword (password: string): string {
+    const salt: string = genSaltSync(10)
+    return hashSync(password, salt)
+  }
+  public static comparePassword (
+    password: string,
+    hashedPassword: string
+  ): Boolean {
+    return compareSync(password, hashedPassword)
+  }
 
-export function HashString (data: string): string {
-  const salt: string = genSaltSync(10)
-  const hashedString: string = hashSync(data, salt)
-  return hashedString
-}
-
-export function compareHashedString (data: string, encrypted: string): Boolean {
-  return compareSync(data, encrypted)
-}
-
-export async function jwtGenerator (payload: jwtGenPayloadDTO): Promise<void> {
-  const { id } = payload
-  const user = await UserModel.findById(id)
-  if (!user) throw { status: 404, message: 'User not found' }
-  const expiresIn = new Date().getTime() + 1000 * 60 * 60 * 24
-
-  sign(
-    payload,
-    ACCESS_TOKEN,
-    { expiresIn, algorithm: 'HS512' },
-    async (error, token) => {
-      if (!error && token) {
-        user.accessToken = token
-        await user.save()
-        //console.log('User is:', user)
-      }
-    }
-  )
+  public static tokenGenerator (payload: JwtToken): string {
+    const now: number = new Date().getTime()
+    const expiryTime: number = now + 1000 * 60 * 60 * 24
+    return sign(payload, String(process.env.JWT_ACCESS_TOKEN), {
+      expiresIn: expiryTime,
+      algorithm: 'HS512'
+    })
+  }
+  public static decodeToken (token: string): JwtToken {
+    return verify(token, String(process.env.JWT_ACCESS_TOKEN)) as JwtToken
+  }
 }

@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { HttpError } from '../types/public.types'
+import { validateSync } from 'class-validator'
 
 export function ApiErrorHandler (
   error: HttpError,
@@ -28,10 +29,13 @@ export function NotFoundErrorHandler (
   })
 }
 
-export function errorHandler (errors: any[]) {
-  let errorsTexts: string[] = []
+export function errorHandler (dto: any) {
+  const errors = validateSync(dto)
+  let errorsTexts: any[] = []
   for (const errorItem of errors) {
     errorsTexts = errorsTexts.concat(errorItem.constraints)
   }
+  if (errorsTexts.length > 0)
+    throw { status: 400, message: 'Validation Error', errors: errorsTexts }
   return errorsTexts
 }

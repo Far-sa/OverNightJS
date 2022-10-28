@@ -1,20 +1,12 @@
 import { BlogIdDTO, CreateBlogTDO } from './blog.dto'
 import { IBlog } from './blog.types'
 import { BlogModel } from '../models/blog.model'
-import { validateSync } from 'class-validator'
 import { errorHandler } from '../utils/ApiErrorHandler'
 import { FineDoc } from '../types/public.types'
 
 export class BlogService {
   async create (blogDTO: CreateBlogTDO): Promise<IBlog> {
-    const errors = validateSync(blogDTO)
-    const validationErr = errorHandler(errors)
-    if (validationErr.length > 0)
-      throw {
-        status: 400,
-        message: 'Validation Errors',
-        errors: validationErr
-      }
+    errorHandler(blogDTO)
     const blog: IBlog = await BlogModel.create(blogDTO)
     return blog
   }

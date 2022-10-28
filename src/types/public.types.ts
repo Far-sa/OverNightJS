@@ -16,7 +16,7 @@ export type ResponseMessage = {
   errors?: object | undefined
 }
 
-export interface jwtGenPayloadDTO {
+export interface JwtToken {
   id: ObjectId
   username: IUser['username']
 }
