@@ -1,12 +1,20 @@
-import { Controller, Delete, Get, Post } from '@overnightjs/core'
+import {
+  ClassMiddleware,
+  Controller,
+  Delete,
+  Get,
+  Post
+} from '@overnightjs/core'
 import { NextFunction, Request, Response } from 'express'
 import { plainToClass } from 'class-transformer'
 import { BlogIdDTO, CreateBlogTDO } from './blog.dto'
 import { BlogService } from './blog.service'
 import { IBlog } from './blog.types'
 import { FineDoc } from '../types/public.types'
+import { Authenticated } from '../middlewares/authMiddleware'
 
 @Controller('blogs')
+@ClassMiddleware(Authenticated)
 export class BlogController {
   private blogService: BlogService = new BlogService()
   @Post()

@@ -11,6 +11,7 @@ export function ApiErrorHandler (
   const statusCode: number = error?.status || 500
   const message: string = error?.message || 'Internal Server Error'
   return res.status(statusCode).json({
+    ...error,
     statusCode,
     message
   })
