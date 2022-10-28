@@ -5,6 +5,8 @@ import cors from 'cors' // npm i --save-dev @types/cors
 
 import { ApiErrorHandler, NotFoundErrorHandler } from './utils/ApiErrorHandler'
 import { BlogController } from './blog/blog.controller'
+import './utils/mongoDBConfig'
+import { AuthController } from './auth/auth.controller'
 
 export class ServerSetup extends Server {
   private server?: http.Server
@@ -26,7 +28,7 @@ export class ServerSetup extends Server {
     this.app.use(ApiErrorHandler)
   }
   private controllersSetup () {
-    const controllers = [new BlogController()]
+    const controllers = [new BlogController(), new AuthController()]
 
     super.addControllers(controllers)
   }

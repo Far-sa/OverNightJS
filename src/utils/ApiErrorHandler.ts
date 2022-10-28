@@ -27,3 +27,11 @@ export function NotFoundErrorHandler (
     message
   })
 }
+
+export function errorHandler (errors: any[]) {
+  let errorsTexts: string[] = []
+  for (const errorItem of errors) {
+    errorsTexts = errorsTexts.concat(errorItem.constraints)
+  }
+  return errorsTexts
+}
