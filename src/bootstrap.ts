@@ -4,6 +4,7 @@ import http from 'http'
 import cors from 'cors' // npm i --save-dev @types/cors
 
 import { ApiErrorHandler, NotFoundErrorHandler } from './utils/ApiErrorHandler'
+import { BlogController } from './blog/blog.controller'
 
 export class ServerSetup extends Server {
   private server?: http.Server
@@ -12,8 +13,8 @@ export class ServerSetup extends Server {
   }
   public init (): void {
     this.expressSetup()
+    this.controllersSetup()
     this.errorHandlerSetup()
-    this.start()
   }
   private expressSetup (): void {
     this.app.use(express.json())
@@ -23,6 +24,11 @@ export class ServerSetup extends Server {
   public errorHandlerSetup (): void {
     this.app.use(NotFoundErrorHandler)
     this.app.use(ApiErrorHandler)
+  }
+  private controllersSetup () {
+    const controllers = [new BlogController()]
+
+    super.addControllers(controllers)
   }
   public start (): void {
     this.server = http.createServer(this.app)
