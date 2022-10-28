@@ -7,7 +7,7 @@ import { ApiErrorHandler, NotFoundErrorHandler } from './utils/ApiErrorHandler'
 
 export class ServerSetup extends Server {
   private server?: http.Server
-  constructor (public port: number) {
+  constructor (public port: number = 5600) {
     super()
   }
   public init (): void {
